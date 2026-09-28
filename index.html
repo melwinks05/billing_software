@@ -1,0 +1,680 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elan LED Enterprises - Billing Software</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+  <header class="app-toolbar no-print">
+    <div>
+      <h1>Elan LED Enterprises</h1>
+      <p>Billing & Estimate Software</p>
+    </div>
+
+    <div class="toolbar-actions">
+      <button class="btn secondary" id="newBillBtn">New</button>
+      <button class="btn secondary" id="historyBtn">Saved Bills</button>
+      <button class="btn primary" id="printBtn">Print / PDF</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ================= EDITOR ================= -->
+
+    <section class="editor no-print">
+
+      <div class="section-title">Bill Details</div>
+
+      <div class="grid three">
+
+        <label>
+          Document Type
+
+          <select id="documentType">
+
+            <option value="Estimate">
+              Estimate
+            </option>
+
+            <option value="Tax Invoice">
+              Tax Invoice
+            </option>
+
+            <option value="Delivery Challan">
+              Delivery Challan
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label id="documentNumberLabel">
+          Estimate No.
+
+          <input
+            id="documentNumber"
+            type="text"
+            readonly
+          >
+
+        </label>
+
+
+        <label>
+          Date
+
+          <input
+            id="documentDate"
+            type="date"
+          >
+
+        </label>
+
+      </div>
+
+
+      <!-- CUSTOMER -->
+
+      <div class="section-title">
+        Customer Details
+      </div>
+
+
+      <div class="grid two">
+
+        <label>
+          Customer Name
+
+          <input
+            id="customerName"
+            placeholder="Enter customer name"
+          >
+
+        </label>
+
+
+        <label>
+          Customer Phone
+
+          <input
+            id="customerPhone"
+            placeholder="Enter phone number"
+          >
+
+        </label>
+
+
+        <label>
+          Customer Address
+
+          <textarea
+            id="customerAddress"
+            rows="2"
+            placeholder="Enter customer address"
+          ></textarea>
+
+        </label>
+
+
+        <label>
+          Customer GSTIN
+
+          <input
+            id="customerGSTIN"
+            placeholder="Optional"
+          >
+
+        </label>
+
+      </div>
+
+
+      <!-- ESTIMATE FOR / BILL TO -->
+
+      <div
+        class="section-title"
+        id="purposeSectionTitle"
+      >
+        Estimate For
+      </div>
+
+
+      <label>
+
+        <input
+          id="estimateFor"
+          class="full-input"
+          placeholder="e.g. Electrical materials for house wiring"
+        >
+
+      </label>
+
+
+      <!-- SHIPPING -->
+
+      <div class="section-title">
+        Shipping Address
+      </div>
+
+
+      <label>
+
+        <textarea
+          id="shippingAddress"
+          rows="3"
+          placeholder="Enter shipping / delivery address"
+        ></textarea>
+
+      </label>
+
+
+      <!-- ITEMS -->
+
+      <div class="section-title items-heading">
+
+        <span>
+          Items
+        </span>
+
+        <button
+          class="btn small primary"
+          id="addItemBtn"
+        >
+          + Add Item
+        </button>
+
+      </div>
+
+
+      <div class="items-editor-wrap">
+
+        <table class="items-editor">
+
+          <thead>
+
+            <tr>
+
+              <th>#</th>
+              <th>Item Name</th>
+              <th>HSN/SAC</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th>GST %</th>
+              <th>GST Amount</th>
+              <th>Total</th>
+              <th></th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="itemEditorBody"></tbody>
+
+        </table>
+
+      </div>
+
+
+      <!-- BOTTOM EDITOR -->
+
+      <div class="bottom-editor">
+
+        <label>
+
+          Notes / Terms
+
+          <textarea
+            id="notes"
+            rows="3"
+            placeholder="Enter any notes or terms"
+          ></textarea>
+
+        </label>
+
+
+        <div class="summary-box">
+
+          <div>
+            <span>Subtotal</span>
+            <strong id="editSubtotal">
+              ₹0.00
+            </strong>
+          </div>
+
+          <div>
+            <span>CGST</span>
+            <strong id="editCGST">
+              ₹0.00
+            </strong>
+          </div>
+
+          <div>
+            <span>SGST</span>
+            <strong id="editSGST">
+              ₹0.00
+            </strong>
+          </div>
+
+          <div class="grand">
+            <span>Total</span>
+            <strong id="editGrandTotal">
+              ₹0.00
+            </strong>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="save-row">
+
+        <button
+          class="btn primary"
+          id="saveBtn"
+        >
+          Save Bill
+        </button>
+
+        <span id="saveStatus"></span>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ================= A4 INVOICE ================= -->
+
+    <section
+      class="invoice-page"
+      id="invoicePage"
+    >
+
+      <div class="invoice-header">
+
+        <div class="logo-wrap">
+
+          <img
+            src="logo.png"
+            alt="Elan LED Enterprises Logo"
+            class="logo"
+          >
+
+        </div>
+
+
+        <div class="business-info">
+
+          <h2>
+            ELAN LED ENTERPRISES
+          </h2>
+
+          <div>
+            Electrical Shop
+          </div>
+
+          <p>
+            KOGALLI ASSESSMENT NO-98,
+            ECHIKERE B H,<br>
+            KAIMARA POST, NR PURA TQ
+          </p>
+
+          <p>
+            <b>Phone:</b>
+            6362826107
+
+            &nbsp; | &nbsp;
+
+            <b>Email:</b>
+            elanled20@gmail.com
+          </p>
+
+          <p>
+
+            <b>GSTIN:</b>
+            26BAAPJ685M1ZZ
+
+            &nbsp; | &nbsp;
+
+            <b>State:</b>
+            29-Karnataka
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- DOCUMENT TITLE -->
+
+      <div
+        class="document-title"
+        id="previewDocumentType"
+      >
+        ESTIMATE
+      </div>
+
+
+      <!-- CUSTOMER -->
+
+      <div class="customer-box">
+
+        <div>
+
+          <b id="previewCustomerLabel">
+            Estimate For / Customer
+          </b>
+
+          <div id="previewCustomerName">
+            —
+          </div>
+
+          <div id="previewCustomerAddress">
+            —
+          </div>
+
+          <div id="previewCustomerPhone">
+            —
+          </div>
+
+          <div id="previewCustomerGSTIN">
+          </div>
+
+        </div>
+
+
+        <div class="doc-meta">
+
+          <div>
+
+            <b>No:</b>
+
+            <span id="previewDocumentNumber">
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <b>Date:</b>
+
+            <span id="previewDocumentDate">
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <b id="previewPurposeLabel">
+              Estimate For:
+            </b>
+
+            <span id="previewEstimateFor">
+              —
+            </span>
+
+          </div>
+
+
+          <div class="shipping-preview">
+
+            <b>
+              Shipping Address:
+            </b>
+
+            <br>
+
+            <span id="previewShippingAddress">
+              —
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ITEMS -->
+
+      <table class="invoice-items">
+
+        <thead>
+
+          <tr>
+
+            <th>#</th>
+            <th>Item Description</th>
+            <th>HSN/SAC</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>GST %</th>
+            <th>GST Amount</th>
+            <th>Amount</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody id="invoicePreviewBody"></tbody>
+
+      </table>
+
+
+      <!-- LOWER SECTION -->
+
+      <div class="invoice-lower">
+
+        <div class="bank-notes">
+
+
+          <!-- AMOUNT WORDS -->
+
+          <div class="words-box">
+
+            <b>
+              Amount in Words:
+            </b>
+
+            <p id="previewAmountWords">
+              Rupees Zero Only
+            </p>
+
+          </div>
+
+
+          <!-- BANK -->
+
+          <div class="bank-box">
+
+            <b>
+              PAY TO:
+            </b>
+
+            <p>
+              <b>Bank Name:</b>
+              Federal Bank, Narasimharajapura
+            </p>
+
+            <p>
+              <b>Account Number:</b>
+              __________________________
+            </p>
+
+            <p>
+              <b>IFSC Code:</b>
+              __________________________
+            </p>
+
+            <p>
+              <b>Account Holder:</b>
+              Elan led enterprices
+            </p>
+
+          </div>
+
+
+          <!-- NOTES -->
+
+          <div class="notes-preview">
+
+            <b>
+              Notes / Terms:
+            </b>
+
+            <p id="previewNotes">
+              —
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- TOTAL -->
+
+        <div class="totals-box">
+
+          <div>
+
+            <span>
+              Subtotal
+            </span>
+
+            <span id="previewSubtotal">
+              ₹0.00
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              CGST
+            </span>
+
+            <span id="previewCGST">
+              ₹0.00
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              SGST
+            </span>
+
+            <span id="previewSGST">
+              ₹0.00
+            </span>
+
+          </div>
+
+
+          <div class="total-line">
+
+            <b>
+              ESTIMATE AMOUNT
+            </b>
+
+            <b id="previewGrandTotal">
+              ₹0.00
+            </b>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- SIGNATURE -->
+
+      <div class="signature">
+
+        <div>
+          For
+          <b>
+            Elan led enterprices
+          </b>
+        </div>
+
+        <div class="signature-space">
+        </div>
+
+        <div>
+          <b>
+            Authorized Signature
+          </b>
+        </div>
+
+      </div>
+
+
+      <div class="footer-note">
+        This is a computer-generated document.
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+
+<!-- ================= HISTORY MODAL ================= -->
+
+<div
+  class="modal no-print"
+  id="historyModal"
+>
+
+  <div class="modal-card">
+
+    <div class="modal-header">
+
+      <h2>
+        Saved Bills
+      </h2>
+
+      <button
+        class="close-btn"
+        id="closeHistory"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div id="historyList"></div>
+
+  </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
